@@ -160,94 +160,96 @@ class SceneGraph():
                 current_node["mesh"].draw(current_node["mode"])
 
 class Hangar():
-    def __init__(self, camera):
+    def __init__(self, square, cylinder, chassis, wheel, camera):
         self.graph = SceneGraph(camera)
         self.graph.add_node("hangar")
         self.graph.add_node("floor",
-                             attach_to="hangar",
-                             mesh=shapes.Square,
-                             color=shapes.GRAY,
-                             scale=[1, 1, 1]
+                                attach_to="hangar",
+                                mesh=square,
+                                color=shapes.GRAY,
+                                scale=[10, 10, 10],
+                                rotation=[-np.pi/2, 0, 0]
                             )
-        self.graph.add_node("wall_north",
-                             attach_to="hangar",
-                             mesh=shapes.Square,
-                             color=shapes.BROWN,
-                             position=[0, 0.75, 0],
-                             scale=[0.35, 0.35, 0.35]
+        self.graph.add_node("wall_1",
+                                attach_to="hangar",
+                                mesh=square,
+                                color=shapes.BROWN,
+                                scale=[10, 5, 5],
+                                position=[0, 2.5, -5]
                             )
-        self.graph.add_node("wall_east",
-                             attach_to="hangar",
-                             mesh=shapes.Square,
-                             color=shapes.BROWN,
-                             position=[-0.5, 0, 0],
-                             rotation=[0, 0, -0.5],
-                             scale=[0.2, 1, 0.2]
+        self.graph.add_node("wall_2",
+                                attach_to="hangar",
+                                mesh=square,
+                                color=shapes.DARK_BLUE,
+                                scale=[10, 5, 5],
+                                position=[5, 2.5, 0],
+                                rotation=[0, -np.pi/2, 0]
                             )
-        self.graph.add_node("wall_south",
-                             attach_to="hangar",
-                             mesh=shapes.Square, color=shapes.BROWN,
-                             position=[0.5, 0, 0],
-                             rotation=[0, 0, 0.5],
-                             scale=[0.2, 1, 0.2]
+        self.graph.add_node("wall_3",
+                                attach_to="hangar",
+                                mesh=square, color=shapes.BROWN,
+                                scale=[10, 5, 5],
+                                position=[0, 2.5, 5],
+                                rotation=[0, -np.pi, 0]
                             )
-        self.graph.add_node("wall_west", 
-                             attach_to="hangar",
-                             mesh=shapes.Square, color=shapes.BROWN,
-                             position=[0.5, 0, 0],
-                             rotation=[0, 0, 0.5],
-                             scale=[0.2, 1, 0.2]
+        self.graph.add_node("wall_4", 
+                                attach_to="hangar",
+                                mesh=square, color=shapes.DARK_BLUE,
+                                scale=[10, 5, 5],
+                                position=[-5, 2.5, 0],
+                                rotation=[0, -3*np.pi/2, 0]
                             )
         
         self.graph.add_node("ceiling",
-                             attach_to="hangar",
-                             mesh=shapes.Square, color=shapes.WHITE,
-                             position=[0.25, -1.5, 0],
-                             scale=[0.2, 0.75, 0.2],
+                                attach_to="hangar",
+                                mesh=square, color=shapes.GRAY,
+                                scale=[10, 10, 10],
+                                rotation=[np.pi/2, 0, 0],
+                                position=[0, 5, 0]
                             )
         
         self.graph.add_node("platform",
-                             attach_to="floor",
-                             mesh=Mesh("assets/cylinder.off", [1.00, 0, 1.00]), color=shapes.WHITE,
-                             position=[0.25, -1.5, 0],
-                             scale=[0.2, 0.75, 0.2],
+                                attach_to="floor",
+                                mesh=cylinder, color=shapes.BLUE,
+                                position=[0, 0, 0],
+                                scale=[0, 0, 0],
                             )
         
         self.graph.add_node("car",
-                             attach_to="platform"
-                            )
+                                attach_to="platform")
+                                
         self.graph.add_node("car_chassis",
-                             attach_to="car",
-                             mesh=Mesh("LamboChassis.obj", [1.00, 0, 1.00]),
-                             color=[1.00, 0, 1.00],
-                             position=[0, 0.5, 0],
-                             scale=[0.5, 0.5, 0.5]
+                                attach_to="car",
+                                mesh= chassis,
+                                color=shapes.RED,
+                                position=[0, 0.5, 0],
+                                scale=[0.5, 0.5, 0.5]
                             )
         self.graph.add_node("car_wheel_front_left",
-                             attach_to="car",
-                             mesh=Mesh("LamboWheel.obj", [1.00, 0, 1.00]),
-                             color=[1.00, 0, 1.00],
-                             position=[0.5, 0.5, 0.5],
-                             scale=[0.5, 0.5, 0.5]
+                                attach_to="car",
+                                mesh= wheel,
+                                color=shapes.BLACK,
+                                position=[0.5, 0.5, 0.5],
+                                scale=[0.5, 0.5, 0.5]
                             )
         self.graph.add_node("car_wheel_front_right",
                                 attach_to="car",
-                                mesh=Mesh("LamboWheel.obj", [1.00, 0, 1.00]),
-                                color=[1.00, 0, 1.00],
+                                mesh= wheel,
+                                color=shapes.BLACK,
                                 position=[-0.5, 0.5, 0.5],
                                 scale=[0.5, 0.5, 0.5]
                                 )
         self.graph.add_node("car_wheel_back_left",
                                 attach_to="car",
-                                mesh=Mesh("LamboWheel.obj", [1.00, 0, 1.00]),
-                                color=[1.00, 0, 1.00],
+                                mesh=wheel,
+                                color=shapes.BLACK,
                                 position=[0.5, 0.5, -0.5],
                                 scale=[0.5, 0.5, 0.5]
                                 )
         self.graph.add_node("car_wheel_back_right",
                                 attach_to="car",
-                                mesh=Mesh("LamboWheel.obj", [1.00, 0, 1.00]),
-                                color=[1.00, 0, 1.00],
+                                mesh=wheel,
+                                color=shapes.BLACK,
                                 position=[-0.5, 0.5, -0.5],
                                 scale=[0.5, 0.5, 0.5]
                                 )
@@ -256,13 +258,12 @@ class Hangar():
         
     def update(self, dt):
         platform_rotation = np.sin(dt * 5) / 2
-        self.graph["platform"]["transform"] = tr.rotationX(platform_rotation)
+        self.graph["platform"]["transform"] = tr.rotationY(platform_rotation)
 
             
 class Model():
-    def __init__(self, position_data, color_data, index_data=None):
+    def __init__(self, position_data, index_data=None):
         self.position_data = position_data
-        self.color_data = color_data
 
         self.index_data = index_data
         if index_data is not None:
@@ -270,31 +271,20 @@ class Model():
 
         self.gpu_data = None
 
-        self.position = np.array([0, 0, 0], dtype=np.float32)
-        self.rotation = np.array([0, 0, 0], dtype=np.float32)
-        self.scale = np.array([1, 1, 1], dtype=np.float32)
-
     def init_gpu_data(self, pipeline):
+        self.pipeline = pipeline
         if self.index_data is not None:
             self.gpu_data = pipeline.vertex_list_indexed(len(self.position_data) // 3, GL.GL_TRIANGLES, self.index_data)
         else:
             self.gpu_data = pipeline.vertex_list(len(self.position_data) // 3, GL.GL_TRIANGLES)
         
         self.gpu_data.position[:] = self.position_data
-        self.gpu_data.color[:] = self.color_data
 
     def draw(self, mode = GL.GL_TRIANGLES):
         self.gpu_data.draw(mode)
 
-    def get_transform(self):
-        translation_matrix = tr.translate(self.position[0], self.position[1], self.position[2])
-        rotation_matrix = tr.rotationX(self.rotation[0]) @ tr.rotationY(self.rotation[1]) @ tr.rotationZ(self.rotation[2])
-        scale_matrix = tr.scale(self.scale[0], self.scale[1], self.scale[2])
-        transformation = translation_matrix @ rotation_matrix @ scale_matrix
-        return np.reshape(transformation, (16, 1), order="F")
-    
 class Mesh(Model):
-    def __init__(self, asset_path, base_color = None):
+    def __init__(self, asset_path):
         mesh_data = tm.load(asset_path)
         mesh_scale = tr.uniformScale(2.0 / mesh_data.scale)
         mesh_translate = tr.translate(*-mesh_data.centroid)
@@ -303,26 +293,16 @@ class Mesh(Model):
         indices = vertex_data[3]
         positions = vertex_data[4][1]
 
-        count = len(positions) // 3
-        colors = np.full((count * 3, 1), 1.0)
-        if base_color is None:
-            colors = vertex_data[5][1]
-        else:
-            for i in range(count):
-                colors[i * 3] = base_color[0]
-                colors[i * 3 + 1] = base_color[1]
-                colors[i * 3 + 2] = base_color[2]
-
-        super().__init__(positions, colors, indices)
+        super().__init__(positions, indices)
 
 if __name__ == "__main__":
     # Instancia del controller
     controller = Controller("Tarea 1", width=WIDTH, height=HEIGHT, resizable=True)
 
-    with open(Path(os.path.dirname(__file__)) / "shaders/color_mesh.vert") as f:
+    with open(Path(os.path.dirname(__file__)) / "color_mesh.vert") as f:
         vertex_source_code = f.read()
 
-    with open(Path(os.path.dirname(__file__)) / "shaders/color_mesh.frag") as f:
+    with open(Path(os.path.dirname(__file__)) / "color_mesh.frag") as f:
         fragment_source_code = f.read()
 
     mesh_pipeline = pyglet.graphics.shader.ShaderProgram(
@@ -330,11 +310,6 @@ if __name__ == "__main__":
         pyglet.graphics.shader.Shader(fragment_source_code, "fragment")
     )
 
-    # Instancia de la cámara
-
-    camera = OrbitCamera(5, "perspective")
-    camera.phi = np.pi / 4
-    camera.theta = np.pi / 4
 
     #Pipeline
 
@@ -348,12 +323,36 @@ if __name__ == "__main__":
         pyglet.graphics.shader.Shader(color_vertex_source_code, "vertex"),
         pyglet.graphics.shader.Shader(color_fragment_source_code, "fragment")
     )
+    # Instancia de la cámara
+
+    camera = OrbitCamera(5, "perspective")
+    camera.phi = np.pi / 4
+    camera.theta = np.pi / 4
+
+    # Instancia de los modelos
+    axes = Model(shapes.Axes["position"])
+    axes.init_gpu_data(color_pipeline)
+    axes.gpu_data.color[:] = shapes.Axes["color"]
+    
+    square = Model(shapes.Square["position"],index_data=shapes.Square["indices"])
+    square.init_gpu_data(mesh_pipeline)
+
+    # Instancia de los objetos
+
+    cylinder = Mesh("assets/cylinder.off")
+    cylinder.init_gpu_data(mesh_pipeline)
+
+    chassis = Mesh("LamboChassis.obj")
+    chassis.init_gpu_data(mesh_pipeline)
+
+    wheel = Mesh("LamboWheel.obj")
+    wheel.init_gpu_data(mesh_pipeline)
 
     # Instancia de la escena
-    graph = SceneGraph(camera)
-    graph.init_gpu_data(mesh_pipeline)
-    hangar = Hangar(camera)
-    hangar.init_gpu_data(mesh_pipeline)
+    axis_scene = SceneGraph(camera)
+    axis_scene.add_node("axes", attach_to="root", mesh=axes, mode=GL.GL_LINES)
+
+    hangar = Hangar(square, cylinder, chassis, wheel, camera)
 
     @controller.event
     def on_resize(width, height):
@@ -363,11 +362,29 @@ if __name__ == "__main__":
     @controller.event
     def on_draw():
         controller.clear()
-        graph.draw()
+        axis_scene.draw()
         hangar.draw()
 
     def update(dt):
         controller.program_state["total_time"] += dt
+
+        if controller.is_key_pressed(pyglet.window.key.A):
+            camera.phi -= dt
+        if controller.is_key_pressed(pyglet.window.key.D):
+            camera.phi += dt
+        if controller.is_key_pressed(pyglet.window.key.W):
+            camera.theta -= dt
+        if controller.is_key_pressed(pyglet.window.key.S):
+            camera.theta += dt
+        if controller.is_key_pressed(pyglet.window.key.Q):
+            camera.distance += dt
+        if controller.is_key_pressed(pyglet.window.key.E):
+            camera.distance -= dt
+        if controller.is_key_pressed(pyglet.window.key._1):
+            camera.type = "perspective"
+        if controller.is_key_pressed(pyglet.window.key._2):
+            camera.type = "orthographic"
+
         hangar.update(controller.program_state["total_time"])
         camera.update()
 
