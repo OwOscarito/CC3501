@@ -10,7 +10,7 @@ from pathlib import Path
 # No es necesaria la siguiente línea si el archivo está en el root del repositorio
 sys.path.append(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
 import grafica.transformations as tr
-import shapes as shapes
+import utils.shapes as shapes
 
 WIDTH = 640
 HEIGHT = 640
@@ -210,9 +210,10 @@ class Hangar():
         
         self.graph.add_node("platform",
                                 attach_to="floor",
-                                mesh=cylinder, color=shapes.BLUE,
-                                position=[0, 0, 0],
-                                scale=[0, 0, 0],
+                                mesh=cylinder, color=shapes.WHITE,
+                                position=[0, 0, -0.2],
+                                scale=[0.5, 0.5, 0.5],
+                                rotation=[np.pi/2, 0, 0]
                             )
         
         self.graph.add_node("car",
@@ -222,43 +223,43 @@ class Hangar():
                                 attach_to="car",
                                 mesh= chassis,
                                 color=shapes.RED,
-                                position=[0, 0.5, 0],
-                                scale=[0.5, 0.5, 0.5]
-                            )
-        self.graph.add_node("car_wheel_front_left",
-                                attach_to="car",
-                                mesh= wheel,
-                                color=shapes.BLACK,
-                                position=[0.5, 0.5, 0.5],
+                                position=[0, 0.7, 0],
                                 scale=[0.5, 0.5, 0.5]
                             )
         self.graph.add_node("car_wheel_front_right",
-                                attach_to="car",
+                                attach_to="car_chassis",
                                 mesh= wheel,
                                 color=shapes.BLACK,
-                                position=[-0.5, 0.5, 0.5],
-                                scale=[0.5, 0.5, 0.5]
-                                )
-        self.graph.add_node("car_wheel_back_left",
-                                attach_to="car",
-                                mesh=wheel,
+                                position=[0.48, -0.1, 0.45],
+                                scale=[0.19, 0.19, 0.19]
+                            )
+        self.graph.add_node("car_wheel_front_left",
+                                attach_to="car_chassis",
+                                mesh= wheel,
                                 color=shapes.BLACK,
-                                position=[0.5, 0.5, -0.5],
-                                scale=[0.5, 0.5, 0.5]
+                                position=[0.48, -0.1, -0.45],
+                                scale=[0.19, 0.19, -0.19]
                                 )
         self.graph.add_node("car_wheel_back_right",
-                                attach_to="car",
+                                attach_to="car_chassis",
                                 mesh=wheel,
                                 color=shapes.BLACK,
-                                position=[-0.5, 0.5, -0.5],
-                                scale=[0.5, 0.5, 0.5]
+                                position=[-0.57, -0.1, 0.45],
+                                scale=[0.19, 0.19, 0.19]
+                                )
+        self.graph.add_node("car_wheel_back_left",
+                                attach_to="car_chassis",
+                                mesh=wheel,
+                                color=shapes.BLACK,
+                                position=[-0.57, -0.1, -0.45],
+                                scale=[0.19, 0.19, -0.19]
                                 )
     def draw(self):
         self.graph.draw() 
         
     def update(self, dt):
-        platform_rotation = np.sin(dt * 5) / 2
-        self.graph["platform"]["transform"] = tr.rotationY(platform_rotation)
+        platform_rotation = dt * 0.5
+        self.graph["platform"]["transform"] = tr.rotationZ(platform_rotation)
 
             
 class Model():
@@ -299,10 +300,10 @@ if __name__ == "__main__":
     # Instancia del controller
     controller = Controller("Tarea 1", width=WIDTH, height=HEIGHT, resizable=True)
 
-    with open(Path(os.path.dirname(__file__)) / "color_mesh.vert") as f:
+    with open(Path(os.path.dirname(__file__)) / "shaders/color_mesh.vert") as f:
         vertex_source_code = f.read()
 
-    with open(Path(os.path.dirname(__file__)) / "color_mesh.frag") as f:
+    with open(Path(os.path.dirname(__file__)) / "shaders/color_mesh.frag") as f:
         fragment_source_code = f.read()
 
     mesh_pipeline = pyglet.graphics.shader.ShaderProgram(
@@ -310,13 +311,12 @@ if __name__ == "__main__":
         pyglet.graphics.shader.Shader(fragment_source_code, "fragment")
     )
 
-
     #Pipeline
 
-    with open(Path(os.path.dirname(__file__)) / "transform.vert") as f:
+    with open(Path(os.path.dirname(__file__)) / "shaders/transform.vert") as f:
         color_vertex_source_code = f.read()
 
-    with open(Path(os.path.dirname(__file__)) / "color.frag") as f:
+    with open(Path(os.path.dirname(__file__)) / "shaders/color.frag") as f:
         color_fragment_source_code = f.read()
 
     color_pipeline = pyglet.graphics.shader.ShaderProgram(
@@ -325,15 +325,11 @@ if __name__ == "__main__":
     )
     # Instancia de la cámara
 
-    camera = OrbitCamera(5, "perspective")
+    camera = OrbitCamera(5.5, "perspective")
     camera.phi = np.pi / 4
-    camera.theta = np.pi / 4
+    camera.theta = 3*(np.pi) / 8
 
-    # Instancia de los modelos
-    axes = Model(shapes.Axes["position"])
-    axes.init_gpu_data(color_pipeline)
-    axes.gpu_data.color[:] = shapes.Axes["color"]
-    
+
     square = Model(shapes.Square["position"],index_data=shapes.Square["indices"])
     square.init_gpu_data(mesh_pipeline)
 
@@ -342,15 +338,14 @@ if __name__ == "__main__":
     cylinder = Mesh("assets/cylinder.off")
     cylinder.init_gpu_data(mesh_pipeline)
 
-    chassis = Mesh("LamboChassis.obj")
+    chassis = Mesh("assets/chassis.obj")
     chassis.init_gpu_data(mesh_pipeline)
 
-    wheel = Mesh("LamboWheel.obj")
+    wheel = Mesh("assets/wheel.obj")
     wheel.init_gpu_data(mesh_pipeline)
 
     # Instancia de la escena
     axis_scene = SceneGraph(camera)
-    axis_scene.add_node("axes", attach_to="root", mesh=axes, mode=GL.GL_LINES)
 
     hangar = Hangar(square, cylinder, chassis, wheel, camera)
 
@@ -367,24 +362,6 @@ if __name__ == "__main__":
 
     def update(dt):
         controller.program_state["total_time"] += dt
-
-        if controller.is_key_pressed(pyglet.window.key.A):
-            camera.phi -= dt
-        if controller.is_key_pressed(pyglet.window.key.D):
-            camera.phi += dt
-        if controller.is_key_pressed(pyglet.window.key.W):
-            camera.theta -= dt
-        if controller.is_key_pressed(pyglet.window.key.S):
-            camera.theta += dt
-        if controller.is_key_pressed(pyglet.window.key.Q):
-            camera.distance += dt
-        if controller.is_key_pressed(pyglet.window.key.E):
-            camera.distance -= dt
-        if controller.is_key_pressed(pyglet.window.key._1):
-            camera.type = "perspective"
-        if controller.is_key_pressed(pyglet.window.key._2):
-            camera.type = "orthographic"
-
         hangar.update(controller.program_state["total_time"])
         camera.update()
 
