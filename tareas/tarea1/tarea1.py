@@ -162,7 +162,9 @@ class SceneGraph():
 class Hangar():
     def __init__(self, square, cylinder, chassis, wheel, camera):
         self.graph = SceneGraph(camera)
-        self.graph.add_node("hangar")
+        self.graph.add_node("hangar",
+                                attach_to="root", 
+                                position=[0, -1, 0])
         self.graph.add_node("floor",
                                 attach_to="hangar",
                                 mesh=square,
