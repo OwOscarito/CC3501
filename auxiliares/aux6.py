@@ -276,19 +276,19 @@ if __name__ == "__main__":
                     cull_face=False)
 
     graph.add_node("cube",
-                   attach_to="shapes",
-                   mesh = cube,
-                   pipeline = lit_textured_mesh_pipeline,
-                   texture = textura,
-                   position = [-2, 0, 0],
-                   color = [1, 0, 0])
+                    attach_to="shapes",
+                    mesh = cube,
+                    pipeline = lit_textured_mesh_pipeline,
+                    texture = textura,
+                    position = [-2, 0, 0],
+                    color = [1, 0, 0])
     graph.add_node("pyramid",
-                     attach_to="shapes",
-                     mesh = pyramid,
-                     pipeline = lit_textured_mesh_pipeline,
-                     texture=Texture(), # Textura vacía
-                     position = [2, 0, 0],
-                     color = [0, 1, 0])
+                    attach_to="shapes",
+                    mesh = pyramid,
+                    pipeline = lit_textured_mesh_pipeline,
+                    texture=Texture(), # Textura vacía
+                    position = [2, 0, 0],
+                    color = [0, 1, 0])
     graph.add_node("triangle",
                     attach_to="shapes",
                     mesh = triangle,
@@ -323,8 +323,7 @@ if __name__ == "__main__":
             camera.type = "perspective"
         if controller.is_key_pressed(pyglet.window.key._2):
             camera.type = "orthographic"
-        camera.update()
-
+        
         if controller.is_key_pressed(pyglet.window.key.UP):
             light.rotateX(-dt)
         if controller.is_key_pressed(pyglet.window.key.DOWN):
@@ -333,6 +332,8 @@ if __name__ == "__main__":
             light.rotateY(-dt)
         if controller.is_key_pressed(pyglet.window.key.RIGHT):
             light.rotateY(dt)
+            
+        camera.update()
 
     @controller.event
     def on_resize(width, height):

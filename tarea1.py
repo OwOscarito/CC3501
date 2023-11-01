@@ -162,7 +162,9 @@ class SceneGraph():
 class Hangar():
     def __init__(self, square, cylinder, chassis, wheel, camera):
         self.graph = SceneGraph(camera)
-        self.graph.add_node("hangar")
+        self.graph.add_node("hangar",
+                                attach_to="root", 
+                                position=[0, -1, 0])
         self.graph.add_node("floor",
                                 attach_to="hangar",
                                 mesh=square,
@@ -230,28 +232,28 @@ class Hangar():
                                 attach_to="car_chassis",
                                 mesh= wheel,
                                 color=shapes.BLACK,
-                                position=[0.48, -0.1, 0.45],
+                                position=[0.48, -0.09, 0.45],
                                 scale=[0.19, 0.19, 0.19]
                             )
         self.graph.add_node("car_wheel_front_left",
                                 attach_to="car_chassis",
                                 mesh= wheel,
                                 color=shapes.BLACK,
-                                position=[0.48, -0.1, -0.45],
+                                position=[0.48, -0.09, -0.45],
                                 scale=[0.19, 0.19, -0.19]
                                 )
         self.graph.add_node("car_wheel_back_right",
                                 attach_to="car_chassis",
                                 mesh=wheel,
                                 color=shapes.BLACK,
-                                position=[-0.57, -0.1, 0.45],
+                                position=[-0.57, -0.09, 0.45],
                                 scale=[0.19, 0.19, 0.19]
                                 )
         self.graph.add_node("car_wheel_back_left",
                                 attach_to="car_chassis",
                                 mesh=wheel,
                                 color=shapes.BLACK,
-                                position=[-0.57, -0.1, -0.45],
+                                position=[-0.57, -0.09, -0.45],
                                 scale=[0.19, 0.19, -0.19]
                                 )
     def draw(self):
