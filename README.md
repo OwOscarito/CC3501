@@ -2,8 +2,8 @@
 
 ## Librerias
 
-python3 -m venv venv
+python3.8 -m venv venv
 
 source venv/bin/activate
 
-pip install numpy scipy matplotlib ipython jupyter pyopengl glfw pillow pyglet trimesh networkx
+pip install numpy scipy matplotlib ipython jupyter pyopengl glfw pillow pyglet trimesh networkx box2d

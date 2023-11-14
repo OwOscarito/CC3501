@@ -47,27 +47,23 @@ class Hangar():
 
         square = Model(shapes.Square["position"], shapes.Square["uv"], shapes.Square["normal"], index_data=shapes.Square["indices"])
         cylinder = mesh_from_file(get_path("assets/cylinder.off"))[0]["mesh"]
-
-        bricks_texture = Texture(get_path("assets/bricks.jpg"))
-        concrete_texture = Texture(get_path("assets/concrete1.jpg"))
-        ceiling_texture = Texture(get_path("assets/ceiling.jpg"))
-
-        concrete_material = Material(
+        
+        floor_material = Material(
             diffuse = [0.5,0.5,0.5],
             specular = [0.5,0.5,0.5],
-            ambient = [0.5,0.5,0.5],
+            ambient = [0.1,0.1,0.1],
             shininess = 10)
             
-        bricks_material = Material(
+        wall_material = Material(
             diffuse = [0.5,0.5,0.5],
             specular = [0.5,0.5,0.5],
-            ambient = [0.5,0.5,0.5],
+            ambient = [0.5,0.3,0.1],
             shininess = 20)
             
         ceiling_material = Material(
             diffuse = [0.5,0.5,0.5],
             specular = [0.5,0.5,0.5],
-            ambient = [0.5,0.5,0.5],
+            ambient = [0.4,0.4,0.4],
             shininess = 5)
             
         platform_material = Material(
@@ -83,9 +79,8 @@ class Hangar():
         self.graph.add_node("floor",
                             attach_to="hangar",
                             mesh=square,
-                            texture = concrete_texture,
-                            material = concrete_material,
-                            pipeline = textured_mesh_lit_pipeline,
+                            material = floor_material,
+                            pipeline = color_mesh_lit_pipeline,
                             color=shapes.GRAY,
                             scale=[10,10,0],
                             rotation=[-np.pi/2, 0, 0]
@@ -94,18 +89,16 @@ class Hangar():
         self.graph.add_node("wall_1",
                             attach_to="hangar",
                             mesh=square,
-                            texture = bricks_texture,
-                            material = bricks_material,
-                            pipeline = textured_mesh_lit_pipeline,
+                            material = wall_material,
+                            pipeline = color_mesh_lit_pipeline,
                             scale=[10, 5, 0],
                             position=[0, 2.5, -5]
                         )
         self.graph.add_node("wall_2",
                             attach_to="hangar",
                             mesh=square,
-                            texture = bricks_texture,
-                            material = bricks_material,
-                            pipeline = textured_mesh_lit_pipeline,
+                            material = wall_material,
+                            pipeline = color_mesh_lit_pipeline,
                             scale=[10, 5, 0],
                             position=[5, 2.5, 0],
                             rotation=[0, -np.pi/2, 0]
@@ -113,9 +106,8 @@ class Hangar():
         self.graph.add_node("wall_3",
                             attach_to="hangar",
                             mesh=square, 
-                            texture = bricks_texture,
-                            material = bricks_material,
-                            pipeline = textured_mesh_lit_pipeline,
+                            material = wall_material,
+                            pipeline = color_mesh_lit_pipeline,
                             scale=[10, 5, 0],
                             position=[0, 2.5, 5],
                             rotation=[0, -np.pi, 0]
@@ -123,9 +115,8 @@ class Hangar():
         self.graph.add_node("wall_4", 
                             attach_to="hangar",
                             mesh=square, 
-                            texture = bricks_texture,
-                            material = bricks_material,
-                            pipeline = textured_mesh_lit_pipeline,
+                            material = wall_material,
+                            pipeline = color_mesh_lit_pipeline,
                             scale=[10, 5, 0],
                             position=[-5, 2.5, 0],
                             rotation=[0, -3*np.pi/2, 0]
@@ -134,10 +125,8 @@ class Hangar():
         self.graph.add_node("ceiling",
                             attach_to="hangar",
                             mesh=square, 
-                            texture = ceiling_texture,
                             pipeline = color_mesh_lit_pipeline,
-                            material = bricks_material,
-                            color=shapes.GRAY,
+                            material = ceiling_material,
                             scale=[10,10, 0],
                             rotation=[np.pi/2, 0, 0],
                             position=[0, 5, 0]
@@ -149,54 +138,68 @@ class Hangar():
                             position=[0,3.8,0],
                             rotation=[0,0,0],
                             light=PointLight(
-                                diffuse = [1,1,1],
-                                specular = [5,5,5],
-                                ambient = [2,2,2],
+                                diffuse = [0,0,0],
+                                specular = [0,0,0],
+                                ambient = [1.5,1.5,1.5],
                                 )
                             )
 
         self.graph.add_node("top_spotlight",
                             attach_to = "hangar",
                             pipeline=[color_mesh_lit_pipeline, textured_mesh_lit_pipeline],
-                            position=[0,3.9,0],
+                            position=[0,4.9,0],
                             rotation=[-np.pi/2,0,0],
                             light=SpotLight(
-                                diffuse = [0.5,0.5,0.5],
-                                specular = [1,1,1],
-                                ambient = [0.5,0.5,0.5],
-                                cutOff = 1.5, # siempre mayor a outerCutOff
-                                outerCutOff = 0.5
+                                diffuse = [1,1,1],
+                                specular = [5,2,2],
+                                ambient = [0,0,0],
+                                cutOff = 0.8,
+                                outerCutOff = 1
                                 )
                             )
-        
-        self.graph.add_node("blue_spotlight",
+
+        self.graph.add_node("spotlight_verde",
                             attach_to = "hangar",
                             pipeline=[color_mesh_lit_pipeline, textured_mesh_lit_pipeline],
-                            position=[2,0,0],
+                            position=[5,0,0],
                             rotation=[-np.pi/2,0,0],
                             light=SpotLight(
                                 diffuse = [0.5,0.5,0.5],
-                                specular = [1,1,1],
-                                ambient = [0.5,0.5,0.5],
-                                cutOff = 1.5, # siempre mayor a outerCutOff
-                                outerCutOff = 0.5
+                                specular = [0,5,0],
+                                ambient = [0,0,0],
+                                cutOff = 0.8,
+                                outerCutOff = 1
                                 )
                             )
-        
-        self.graph.add_node("green_spotlight",
+
+        self.graph.add_node("spotlight_roja",
                             attach_to = "hangar",
                             pipeline=[color_mesh_lit_pipeline, textured_mesh_lit_pipeline],
-                            position=[0,0,-2],
-                            rotation=[-np.pi/2,0,0],
+                            position=[0,0,5],
+                            rotation=[-np.pi/4,np.pi/2,0],
                             light=SpotLight(
                                 diffuse = [0.5,0.5,0.5],
-                                specular = [1,1,1],
-                                ambient = [0.5,0.5,0.5],
-                                cutOff = 1.5, # siempre mayor a outerCutOff
-                                outerCutOff = 0.5
+                                specular = [5,0,0],
+                                ambient = [0,0,0],
+                                cutOff = 0.8,
+                                outerCutOff = 1
                                 )
                             )
-        
+
+        self.graph.add_node("spotlight_azul",
+                            attach_to = "hangar",
+                            pipeline=[color_mesh_lit_pipeline, textured_mesh_lit_pipeline],
+                            position=[5,0,5],
+                            rotation=[-np.pi/4,3*np.pi/4,0],
+                            light=SpotLight(
+                                diffuse = [0.5,0.5,0.5],
+                                specular = [0,0,5],
+                                ambient = [0,0,0],
+                                cutOff = 0.8,
+                                outerCutOff = 1
+                                )
+                            )
+
         self.graph.add_node("platform",
                             attach_to="hangar",
                             scale = [5,5,5]
@@ -225,21 +228,21 @@ class Hangar():
         self.current_material = 0
         red = Material(
                     diffuse = [0.5,0.5,0.5],
-                    specular = [0,0, 1],
+                    specular = [0,1, 0],
                     ambient = [0.5,0.1,0.1],
-                    shininess = 20
+                    shininess = 40
                     )
     
         blue = Material(
                         diffuse = [0.5,0.5,0.5],
-                        specular = [0,10, 0],
+                        specular = [1,0, 0],
                         ambient = [0.1,0.1,0.5],
                         shininess = 20
                         )
         
         green = Material(
                         diffuse = [0.2,0.2,0.2],
-                        specular = [1,0,0],
+                        specular = [0,0,1],
                         ambient = [0.1,0.5,0.1],
                         shininess = 20
                         )
@@ -260,7 +263,6 @@ class Hangar():
                                     material = red,
                                     texture = chassis_texture,
                                     pipeline = color_mesh_lit_pipeline,
-                                    color=shapes.RED,
                                     position=[0, 0.2, 0],
                                     scale=[0.5, 0.5, 0.5]
                                 )
@@ -268,9 +270,8 @@ class Hangar():
                                     attach_to="car_chassis",
                                     mesh= wheel_mesh,
                                     material = wheel_material,
-                                    pipeline = color_mesh_lit_pipeline,
+                                    pipeline = textured_mesh_lit_pipeline,
                                     texture = wheel_texture,
-                                    color=shapes.BLACK,
                                     position=[0.48, -0.09, 0.45],
                                     scale=[0.19, 0.19, 0.19]
                                 )
@@ -278,9 +279,8 @@ class Hangar():
                                     attach_to="car_chassis",
                                     mesh= wheel_mesh,
                                     material = wheel_material,
-                                    pipeline = color_mesh_lit_pipeline,
+                                    pipeline = textured_mesh_lit_pipeline,
                                     texture = wheel_texture,
-                                    color=shapes.BLACK,
                                     position=[0.48, -0.09, -0.45],
                                     scale=[0.19, 0.19, -0.19]
                                     )
@@ -288,9 +288,8 @@ class Hangar():
                                     attach_to="car_chassis",
                                     mesh=wheel_mesh,
                                     material = wheel_material,
-                                    pipeline = color_mesh_lit_pipeline,
+                                    pipeline = textured_mesh_lit_pipeline,
                                     texture = wheel_texture,
-                                    color=shapes.BLACK,
                                     position=[-0.57, -0.09, 0.45],
                                     scale=[0.19, 0.19, 0.19]
                                     )
@@ -298,9 +297,8 @@ class Hangar():
                                     attach_to="car_chassis",
                                     mesh=wheel_mesh,
                                     material = wheel_material,
-                                    pipeline = color_mesh_lit_pipeline,
+                                    pipeline = textured_mesh_lit_pipeline,
                                     texture = wheel_texture,
-                                    color=shapes.BLACK,
                                     position=[-0.57, -0.09, -0.45],
                                     scale=[0.19, 0.19, -0.19]
                                     )
