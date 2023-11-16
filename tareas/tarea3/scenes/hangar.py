@@ -20,6 +20,9 @@ from utils.scene_graph import SceneGraph
 from utils.drawables import Model, Texture, DirectionalLight, PointLight, SpotLight, Material
 from utils.helpers import init_axis, init_pipeline, mesh_from_file, get_path
 
+import matplotlib.pyplot as plt
+import pydot
+from networkx.drawing.nx_pydot import graphviz_layout
 
 class Hangar():
     def __init__(self, controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline):
@@ -52,8 +55,8 @@ class Hangar():
         platform_material = Material(
             diffuse = [0.1,0.1,0.1],
             specular = [0.5,0.5,0.5],
-            ambient = [0,0,0],
-            shininess = 20)
+            ambient = [0.6,0.6,0.6],
+            shininess = 50)
             
         self.graph = SceneGraph(controller)
         self.graph.add_node("hangar",
@@ -193,7 +196,7 @@ class Hangar():
                             mesh=cylinder, 
                             pipeline = color_mesh_lit_pipeline,
                             material = platform_material,
-                            color=shapes.BLACK,
+                            color=shapes.WHITE,
                             position=[0, 0, 0],
                             scale=[1, 0.1, 1],
                             )
@@ -235,19 +238,23 @@ class Hangar():
         wheel_material = Material(
                 diffuse = [0.5,0.5,0.5],
                 specular = [0,0,0],
-                ambient = [0,0,0],
+                ambient = [0.1,0.1,0.1],
                 shininess = 5)
 
 
-        self.graph.add_node("car", attach_to="platform")
+        self.graph.add_node("car", 
+            attach_to="platform", 
+            position=[0, 0.1, 0],
+            scale=[0.5,0.5,0.5]
+        )
+
         self.graph.add_node("car_chassis",
                                     attach_to="car",
                                     mesh= chassis_mesh,
                                     material = red,
                                     texture = chassis_texture,
-                                    pipeline = color_mesh_lit_pipeline,
+                                    pipeline = textured_mesh_lit_pipeline,
                                     position=[0, 0.2, 0],
-                                    scale=[0.5, 0.5, 0.5]
                                 )
         self.graph.add_node("car_wheel_front_right",
                                     attach_to="car_chassis",
@@ -285,6 +292,7 @@ class Hangar():
                                     position=[-0.57, -0.09, -0.45],
                                     scale=[0.19, 0.19, -0.19]
                                     )
+
     def update(self,dt):
         platform_rotation = dt * 0.5
         self.graph["platform"]["rotation"][1] += platform_rotation

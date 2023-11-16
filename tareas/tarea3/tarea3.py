@@ -73,15 +73,11 @@ class SceneController():
 
     def nextScene(self):
         nextScene = self.scene.nextScene()
-        print("1")
         self.scene = nextScene
-        print("2")
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.ENTER:
-            print("Enter")
             self.nextScene()
-            print("Change to scene: ", self.scene)
         self.scene.on_key_press(symbol, modifiers)
 
 
