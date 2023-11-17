@@ -17,7 +17,7 @@ import utils.shapes as shapes
 from utils.camera import OrbitCamera, FreeCamera
 from utils.scene_graph import SceneGraph
 from utils.drawables import Model, Texture, DirectionalLight, PointLight, SpotLight, Material
-from utils.helpers import init_axis, init_pipeline, mesh_from_file, get_path
+from utils.helpers import mesh_from_file, get_path
 
 class Circuit():
     def __init__(self, controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline, material):
@@ -28,7 +28,7 @@ class Circuit():
 
         square = Model(shapes.Square["position"], shapes.Square["uv"], shapes.Square["normal"], index_data=shapes.Square["indices"])
         cylinder = mesh_from_file(get_path("assets/cylinder.off"))[0]["mesh"]
-        floor_texture = Texture(get_path("assets/bricks.jpg"), GL.GL_REPEAT, GL.GL_LINEAR)
+        floor_texture = Texture(get_path("assets/bricks.jpg"))
 
         floor_material = Material(
             diffuse = [0.5,0.5,0.5],
@@ -71,8 +71,8 @@ class Circuit():
                 shininess = 5)
 
         self.graph.add_node("car", 
-            position=[0, 0.2, 0],
-            scale=[0.5,0.5,0.5]
+            position=[0, 0.1, 0],
+            rotation=[0, -np.pi/2, 0]
         )
 
         self.graph.add_node("car_chassis",
@@ -119,6 +119,8 @@ class Circuit():
                                     position=[-0.57, -0.09, -0.45],
                                     scale=[0.19, 0.19, -0.19]
                                     )
+
+
         ########## Simulación Física ##########
         world = b2World(gravity=(0, -10), doSleep=True)
 
@@ -151,7 +153,6 @@ class Circuit():
         car_forward = np.array([np.sin(-car_body.angle), 0, np.cos(-car_body.angle)])
         if self.controller.is_key_pressed(pyglet.window.key.A):
             car_body.ApplyTorque(-0.5, True)
-            car_whe
         if self.controller.is_key_pressed(pyglet.window.key.D):
             car_body.ApplyTorque(0.5, True)
         if self.controller.is_key_pressed(pyglet.window.key.W):
@@ -159,7 +160,7 @@ class Circuit():
         if self.controller.is_key_pressed(pyglet.window.key.S):
             car_body.ApplyForce((-car_forward[0], -car_forward[2]), car_body.worldCenter, True)
 
-        camera = controller.program_state["camera"]
+        camera = self.controller.program_state["camera"]
         camera.position[0] = car_body.position[0] + 0.5 * np.sin(car_body.angle)
         camera.position[1] = 5
         camera.position[2] = car_body.position[1] - 0.5 * np.cos(car_body.angle)

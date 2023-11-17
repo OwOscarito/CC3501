@@ -14,7 +14,7 @@ sys.path.append(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
 
 import grafica.transformations as tr
 import utils.shapes as shapes
-from utils.camera import OrbitCamera
+from utils.camera import OrbitCamera, FreeCamera
 from utils.scene_graph import SceneGraph
 from utils.drawables import Model, Texture, DirectionalLight, PointLight, SpotLight, Material
 from utils.helpers import init_axis, init_pipeline, mesh_from_file, get_path
@@ -61,7 +61,8 @@ class Controller(pyglet.window.Window):
 
 class SceneController():
     def __init__(self, controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline):
-        self.scene = Hangar(controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline)
+        self.controller = controller
+        self.scene = Hangar(self, textured_mesh_lit_pipeline, color_mesh_lit_pipeline)
         self.textured_mesh_lit_pipeline = textured_mesh_lit_pipeline
         self.color_mesh_lit_pipeline = color_mesh_lit_pipeline
 
@@ -71,14 +72,11 @@ class SceneController():
     def draw(self):
         self.scene.draw()
 
-    def nextScene(self):
-        nextScene = self.scene.nextScene()
-        self.scene = nextScene
-
     def on_key_press(self, symbol, modifiers):
-        if symbol == pyglet.window.key.ENTER:
-            self.nextScene()
-        self.scene.on_key_press(symbol, modifiers)
+        self.scene.on_key_press(self, symbol, modifiers)
+    
+    def change_scene(self, scene):
+        self.scene = scene
 
 
 if __name__ == "__main__":
@@ -94,11 +92,6 @@ if __name__ == "__main__":
         get_path("shaders/textured_mesh_lit.vert"),
         get_path("shaders/textured_mesh_lit.frag"))
 
-    # Instancia de la cámara
-    controller.program_state["camera"] = OrbitCamera(5.5, "perspective")
-    controller.program_state["camera"].phi = np.pi / 4
-    controller.program_state["camera"].theta = 3*(np.pi) / 8
-
     # Cargamos la escena
     axis_scene = init_axis(controller)
     sceneController = SceneController(controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline)
@@ -106,7 +99,7 @@ if __name__ == "__main__":
     @controller.event
     def on_resize(width, height):
         controller.program_state["camera"].resize(width, height)
-        
+
     # draw loop
     @controller.event
     def on_draw():
@@ -123,8 +116,7 @@ if __name__ == "__main__":
     def update(dt):
         controller.program_state["total_time"] += dt
         sceneController.update(dt)
-        camera = controller.program_state["camera"]
-        camera.update()
+
 
     pyglet.clock.schedule_interval(update, 1/60)
     pyglet.app.run()

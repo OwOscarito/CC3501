@@ -6,8 +6,6 @@ from Box2D import b2PolygonShape, b2World
 import grafica.transformations as tr
 import networkx as nx
 import matplotlib.pyplot as plt
-import pydot
-from networkx.drawing.nx_pydot import graphviz_layout
 # No es necesario este bloque de código si se ejecuta desde la carpeta raíz del repositorio
 # v
 if sys.path[0] != "":
@@ -100,16 +98,70 @@ if __name__ == "__main__":
                    rotation=[-np.pi/4, 0, 0],
                    light=DirectionalLight(diffuse = [1, 1, 1], specular = [0.25, 0.25, 0.25], ambient = [0.15, 0.15, 0.15]))
 
-    zorzal = mesh_from_file(get_path("assets/PolyCar.obj"))
-    graph.add_node("zorzal")
-    for i in range(len(zorzal)):
-        graph.add_node(zorzal[i]["id"],
-                    attach_to="zorzal",
-                    mesh=zorzal[i]["mesh"],
-                    pipeline=textured_mesh_lit_pipeline,
-                    material=Material(),
-                    texture=zorzal[i]["texture"],
-                    cull_face=False)
+    chassis = mesh_from_file(get_path("assets/LamboChassis.obj"))
+    chassis_mesh= chassis[0]["mesh"]
+    chassis_texture = chassis[0]["texture"]
+
+    wheel = mesh_from_file(get_path("assets/LamboWheel.obj"))
+    wheel_mesh= wheel[0]["mesh"]
+    wheel_texture = wheel[0]["texture"]
+
+    wheel_material = Material(
+            diffuse = [0.5,0.5,0.5],
+            specular = [0,0,0],
+            ambient = [0.1,0.1,0.1],
+            shininess = 5)
+    graph.add_node("zorzal", 
+            position=[0, 0.1, 0],
+            scale=[0.5,0.5,0.5],
+            rotation=[0, -np.pi/2, 0]
+        )
+
+    graph.add_node("car_chassis",
+                                    attach_to="zorzal",
+                                    mesh= chassis_mesh,
+                                    material = wheel_material,
+                                    texture = chassis_texture,
+                                    pipeline = textured_mesh_lit_pipeline,
+                                    position=[0, 0.2, 0],
+                                )
+    graph.add_node("car_wheel_front_right",
+                                    attach_to="car_chassis",
+                                    mesh= wheel_mesh,
+                                    material = wheel_material,
+                                    pipeline = textured_mesh_lit_pipeline,
+                                    texture = wheel_texture,
+                                    position=[0.48, -0.09, 0.45],
+                                    scale=[0.19, 0.19, 0.19]
+                                )
+    graph.add_node("car_wheel_front_left",
+                                    attach_to="car_chassis",
+                                    mesh= wheel_mesh,
+                                    material = wheel_material,
+                                    pipeline = textured_mesh_lit_pipeline,
+                                    texture = wheel_texture,
+                                    position=[0.48, -0.09, -0.45],
+                                    scale=[0.19, 0.19, -0.19]
+                                    )
+    graph.add_node("car_wheel_back_right",
+                                    attach_to="car_chassis",
+                                    mesh=wheel_mesh,
+                                    material = wheel_material,
+                                    pipeline = textured_mesh_lit_pipeline,
+                                    texture = wheel_texture,
+                                    position=[-0.57, -0.09, 0.45],
+                                    scale=[0.19, 0.19, 0.19]
+                                    )
+    graph.add_node("car_wheel_back_left",
+                                    attach_to="car_chassis",
+                                    mesh=wheel_mesh,
+                                    material = wheel_material,
+                                    pipeline = textured_mesh_lit_pipeline,
+                                    texture = wheel_texture,
+                                    position=[-0.57, -0.09, -0.45],
+                                    scale=[0.19, 0.19, -0.19]
+                                    )
+
     graph.add_node("point_light",
                     attach_to="zorzal",
                     pipeline=[color_mesh_lit_pipeline, textured_mesh_lit_pipeline],
@@ -162,10 +214,6 @@ if __name__ == "__main__":
                           ambient = [0.1, 0.1, 0.1],
                           shininess = 256
                      ))
-    
-    pos = graphviz_layout(graph.graph, prog="dot")  # Seed for reproducible layout
-    nx.draw(graph.graph, pos, with_labels=True)
-    plt.show()
 
     ########## Simulación Física ##########
     world = b2World(gravity=(0, 0))

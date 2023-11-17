@@ -20,10 +20,6 @@ from utils.scene_graph import SceneGraph
 from utils.drawables import Model, Texture, DirectionalLight, PointLight, SpotLight, Material
 from utils.helpers import init_axis, init_pipeline, mesh_from_file, get_path
 
-import matplotlib.pyplot as plt
-import pydot
-from networkx.drawing.nx_pydot import graphviz_layout
-
 class Hangar():
     def __init__(self, controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline):
         # Definir pipeline
@@ -293,16 +289,25 @@ class Hangar():
                                     scale=[0.19, 0.19, -0.19]
                                     )
 
+        # Instancia de la cámara
+        self.controller.program_state["camera"] = OrbitCamera(5.5, "perspective")
+        self.controller.program_state["camera"].phi = np.pi / 4
+        self.controller.program_state["camera"].theta = 3*(np.pi) / 8
+        
     def update(self,dt):
         platform_rotation = dt * 0.5
         self.graph["platform"]["rotation"][1] += platform_rotation
+        camera = self.controller.program_state["camera"]
+        camera.update()
 
     def draw(self):
         self.graph.draw()
 
-    def on_key_press(self, symbol, modifiers):
+    def on_key_press(self, scene_controller, symbol, modifiers):
         if symbol == pyglet.window.key.SPACE:
             self.change_car_material()
+        if symbol == pyglet.window.key.ENTER:
+            self.nextScene()
 
     def change_car_material(self):
         self.current_material += 1
@@ -311,13 +316,13 @@ class Hangar():
         print(self.current_material)
         self.graph["car_chassis"]["material"] = self.material_list[self.current_material]
 
-    def nextScene(self):
+    def nextScene(self, scene_controller):
         car_material = self.graph["car_chassis"]["material"]
-        self.graph.graph.remove_nodes_from([nx.dfs_preorder_nodes(self.graph, "hangar")])
         circuit = Circuit(self.controller, 
                 self.textured_mesh_lit_pipeline, 
                 self.color_mesh_lit_pipeline, 
                 car_material
                 )
-        return circuit
+        self.scene = circuit
+
 
