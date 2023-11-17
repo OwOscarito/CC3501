@@ -20,9 +20,10 @@ from utils.drawables import Model, Texture, DirectionalLight, PointLight, SpotLi
 from utils.helpers import mesh_from_file, get_path
 
 class Circuit():
-    def __init__(self, controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline, material):
+    def __init__(self, scene_controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline, material):
 
-        self.controller = controller
+        self.scene_controller = scene_controller
+        self.controller = scene_controller.controller
         self.textured_mesh_lit_pipeline = textured_mesh_lit_pipeline
         self.color_mesh_lit_pipeline = color_mesh_lit_pipeline
 
@@ -132,7 +133,9 @@ class Circuit():
         self.controller.program_state["world"] = world
         self.controller.program_state["bodies"]["car"] = car_body
         #######################################
-
+        
+        self.controller.program_state["camera"] = FreeCamera([0, 0, 0], "perspective")
+        self.controller.program_state["camera"].pitch = -np.pi / 8
     # Aquí se actualizan los parámetros de la simulación física
     def update_world(self, dt):
         world = self.controller.program_state["world"]

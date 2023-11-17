@@ -21,12 +21,13 @@ from utils.drawables import Model, Texture, DirectionalLight, PointLight, SpotLi
 from utils.helpers import init_axis, init_pipeline, mesh_from_file, get_path
 
 class Hangar():
-    def __init__(self, controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline):
+    def __init__(self, scene_controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline):
         # Definir pipeline
-        self.controller = controller
+        self.scene_controller = scene_controller
+        self.controller = scene_controller.controller
         self.textured_mesh_lit_pipeline = textured_mesh_lit_pipeline
         self.color_mesh_lit_pipeline = color_mesh_lit_pipeline
-
+    
         square = Model(shapes.Square["position"], shapes.Square["uv"], shapes.Square["normal"], index_data=shapes.Square["indices"])
         cylinder = mesh_from_file(get_path("assets/cylinder.off"))[0]["mesh"]
         
@@ -54,7 +55,7 @@ class Hangar():
             ambient = [0.6,0.6,0.6],
             shininess = 50)
             
-        self.graph = SceneGraph(controller)
+        self.graph = SceneGraph(self.controller)
         self.graph.add_node("hangar",
                             attach_to="root", 
                         )
@@ -303,7 +304,7 @@ class Hangar():
     def draw(self):
         self.graph.draw()
 
-    def on_key_press(self, scene_controller, symbol, modifiers):
+    def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.SPACE:
             self.change_car_material()
         if symbol == pyglet.window.key.ENTER:
@@ -316,13 +317,13 @@ class Hangar():
         print(self.current_material)
         self.graph["car_chassis"]["material"] = self.material_list[self.current_material]
 
-    def nextScene(self, scene_controller):
+    def nextScene(self):
         car_material = self.graph["car_chassis"]["material"]
-        circuit = Circuit(self.controller, 
+        circuit = Circuit(self.scene_controller, 
                 self.textured_mesh_lit_pipeline, 
                 self.color_mesh_lit_pipeline, 
                 car_material
                 )
-        self.scene = circuit
+        self.scene_controller.scene = circuit
 
 

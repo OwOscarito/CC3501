@@ -73,7 +73,7 @@ class SceneController():
         self.scene.draw()
 
     def on_key_press(self, symbol, modifiers):
-        self.scene.on_key_press(self, symbol, modifiers)
+        self.scene.on_key_press(symbol, modifiers)
     
     def change_scene(self, scene):
         self.scene = scene
@@ -94,28 +94,27 @@ if __name__ == "__main__":
 
     # Cargamos la escena
     axis_scene = init_axis(controller)
-    sceneController = SceneController(controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline)
+    scene_controller = SceneController(controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline)
 
     @controller.event
     def on_resize(width, height):
-        controller.program_state["camera"].resize(width, height)
-
+        scene_controller.controller.program_state["camera"].resize(width, height)
     # draw loop
     @controller.event
     def on_draw():
         controller.clear()
         axis_scene.draw()
-        sceneController.draw()
+        scene_controller.draw()
     
     @controller.event
     # Cambiar autos en ciclo
     def on_key_press(symbol, modifiers):
-        sceneController.on_key_press(symbol, modifiers)
+        scene_controller.on_key_press(symbol, modifiers)
 
     @controller.event
     def update(dt):
         controller.program_state["total_time"] += dt
-        sceneController.update(dt)
+        scene_controller.update(dt)
 
 
     pyglet.clock.schedule_interval(update, 1/60)
