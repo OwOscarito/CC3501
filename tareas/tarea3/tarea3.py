@@ -14,14 +14,14 @@ sys.path.append(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
 
 import grafica.transformations as tr
 import utils.shapes as shapes
-from utils.camera import OrbitCamera
+from utils.camera import FreeCamera
 from utils.scene_graph import SceneGraph
 from utils.drawables import Model, Texture, DirectionalLight, PointLight, SpotLight, Material
 from utils.helpers import init_axis, init_pipeline, mesh_from_file, get_path
 from Box2D import b2PolygonShape, b2World
 
-from scenes.hangar import Hangar
-from scenes.circuit import Circuit
+from scenes.scenes import Hangar, Circuit
+
 
 WIDTH = 640
 HEIGHT = 640
@@ -39,7 +39,9 @@ class Controller(pyglet.window.Window):
             "world": None,
             # parámetros para el integrador
             "vel_iters": 6,
-            "pos_iters": 2 }
+            "pos_iters": 2,
+            "scene": None
+            }
         self.init()
 
     def init(self):
@@ -59,6 +61,9 @@ class Controller(pyglet.window.Window):
     def on_key_release(self, symbol, modifiers):
         controller.keys_state[symbol] = False
 
+    def change_scene(self, scene):
+        self.program_state["scene"] = scene
+        
 class SceneController():
     def __init__(self, controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline):
         self.scene = Hangar(controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline)
@@ -94,14 +99,11 @@ if __name__ == "__main__":
         get_path("shaders/textured_mesh_lit.vert"),
         get_path("shaders/textured_mesh_lit.frag"))
 
-    # Instancia de la cámara
-    controller.program_state["camera"] = OrbitCamera(5.5, "perspective")
-    controller.program_state["camera"].phi = np.pi / 4
-    controller.program_state["camera"].theta = 3*(np.pi) / 8
-
+    #Inicializar cámara
+    controller.program_state["camera"] = FreeCamera([0,0,0],"perspective")
     # Cargamos la escena
     axis_scene = init_axis(controller)
-    sceneController = SceneController(controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline)
+    controller.program_state["scene"] = Hangar(controller, textured_mesh_lit_pipeline, color_mesh_lit_pipeline)
 
     @controller.event
     def on_resize(width, height):
@@ -112,19 +114,17 @@ if __name__ == "__main__":
     def on_draw():
         controller.clear()
         axis_scene.draw()
-        sceneController.draw()
+        controller.program_state["scene"].draw()
     
     @controller.event
     # Cambiar autos en ciclo
     def on_key_press(symbol, modifiers):
-        sceneController.on_key_press(symbol, modifiers)
+        controller.program_state["scene"].on_key_press(symbol, modifiers)
 
     @controller.event
     def update(dt):
         controller.program_state["total_time"] += dt
-        sceneController.update(dt)
-        camera = controller.program_state["camera"]
-        camera.update()
+        controller.program_state["scene"].update(dt)
 
     pyglet.clock.schedule_interval(update, 1/60)
     pyglet.app.run()
