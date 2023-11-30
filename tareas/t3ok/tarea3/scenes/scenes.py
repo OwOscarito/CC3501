@@ -430,34 +430,8 @@ class Circuit():
             linearDamping = 0.7,  # Adjust linear damping
             angularDamping = 0.5,  # Adjust angular damping
             )
-        self.car_chassis.CreatePolygonFixture(box=(0.25, 0), friction=0.7)
+        self.car_chassis.CreatePolygonFixture(box=(0.25, 0.5), friction=0.7)
         self.controller.program_state["bodies"]["car_chassis"] = self.car_chassis
-
-        self.FR_wheel = world.CreateDynamicBody()
-        self.FR_wheel.CreatePolygonFixture(box=(0.25, 0.25), density=0)
-        self.controller.program_state["bodies"]["FR_wheel"] = self.FR_wheel
-
-        self.FL_wheel = world.CreateDynamicBody()
-        self.FL_wheel.CreatePolygonFixture(box=(0.25, 0.25), density=0)
-        self.controller.program_state["bodies"]["FL_wheel"] = self.FL_wheel
-
-        world.CreateRevoluteJoint(bodyA=self.car_chassis, 
-            bodyB=self.FR_wheel, 
-            localAnchorA=(0,0), 
-            collideConnected=False,
-            enableLimit=True,
-            lowerAngle = -0.1,
-            upperAngle = 0.1
-            )
-
-        world.CreateRevoluteJoint(bodyA=self.car_chassis, 
-            bodyB=self.FL_wheel, 
-            localAnchorA=(0,0), 
-            collideConnected=False,
-            enableLimit=True,
-            lowerAngle = -0.1,
-            upperAngle = 0.1
-            )
         #######################################
 
         self.car_chassis.position = (79.5, 15.5)
@@ -496,8 +470,8 @@ class Circuit():
                 self.car_chassis.angularVelocity = -1
 
         self.graph["car_chassis"]["transform"] = tr.translate(self.car_chassis.position[0], 0, self.car_chassis.position[1]) @ tr.rotationY(-self.car_chassis.angle)
-        self.graph["FR_wheel"]["transform"] = tr.translate(self.FR_wheel.position[0], 0, self.FR_wheel.position[1]) @ tr.rotationY(-self.FR_wheel.angle)
-        self.graph["FL_wheel"]["transform"] = tr.translate(self.FL_wheel.position[0], 0, self.FL_wheel.position[1]) @ tr.rotationY(-self.FL_wheel.angle)
+        self.graph["FR_wheel"]["transform"] = tr.translate(self.car_chassis.position[0], 0, self.car_chassis.position[1]) @ tr.rotationY(-self.car_chassis.angle)
+        self.graph["FL_wheel"]["transform"] = tr.translate(self.car_chassis.position[0], 0, self.car_chassis.position[1]) @ tr.rotationY(-self.car_chassis.angle)
         self.graph["BR_wheel"]["transform"] = tr.translate(self.car_chassis.position[0], 0, self.car_chassis.position[1]) @ tr.rotationY(-self.car_chassis.angle)
         self.graph["BL_wheel"]["transform"] = tr.translate(self.car_chassis.position[0], 0, self.car_chassis.position[1]) @ tr.rotationY(-self.car_chassis.angle)
 
